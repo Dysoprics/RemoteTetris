@@ -67,7 +67,6 @@ class tetrisBlock {
             let xPrint = this.previousPosition[0] + this.previousRenderRules[i][0];
             let yPrint = this.previousPosition[1] + this.previousRenderRules[i][1];
             
-            tetrisBoard.gameBoard[xPrint][yPrint].occupied = false;
             tetrisBoard.gameBoard[xPrint][yPrint].ref.style.backgroundColor = emptyCellColor;
         }
 
@@ -80,7 +79,6 @@ class tetrisBlock {
             let xPrint = this.position[0] + this.renderRules[i][0];
             let yPrint = this.position[1] + this.renderRules[i][1];
             
-            tetrisBoard.gameBoard[xPrint][yPrint].occupied = true;
             tetrisBoard.gameBoard[xPrint][yPrint].ref.style.backgroundColor = filledCellColor;
         }
     }
@@ -96,8 +94,12 @@ class tetrisBlock {
 
             if(xPlacement < 0 || xPlacement >= tetrisBoard.dimentions.columns || yPlacement < 0 || yPlacement >= tetrisBoard.dimentions.rows) {
                 translationFail = true;
+                break;
             }
-            // FOR LOOP DETECT NEARBY OCCUPANCY
+
+            if(tetrisBoard.gameBoard[xPlacement][yPlacement].occupied) {
+                translationFail = true;
+            }
         } 
 
         if (translationFail) {
@@ -131,7 +133,10 @@ class tetrisBlock {
             if(attemptedXpos < 0 || attemptedXpos >= tetrisBoard.dimentions.columns || attemptedYpos < 0 || attemptedYpos >= tetrisBoard.dimentions.rows) {
                 rotationFail = true;
             }
-            // FOR LOOP DETECT NEARBY OCCUPANCY
+            
+            if(tetrisBoard.gameBoard[attemptedXpos][attemptedYpos].occupied) {
+                rotationFail = true;
+            }
         }
 
         if (rotationFail) {
@@ -175,8 +180,6 @@ document.addEventListener('keydown', (e1) => {
             case ('arrowdown' === key || 's' === key):
                 if(tetrisBoard.currentTetrisObject.translate([0, 1])) {
                     tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
-                } else {
-                    // ADD LOGIC FOR REACHING BOTTOM
                 }
                 break;
         }
