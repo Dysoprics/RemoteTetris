@@ -2,7 +2,6 @@ const tetrisBoard = {
     dimentions: {rows: 20, columns: 10},
     gameBoard: [],
     currentTetrisObject: null,
-    gameRunning: true,
     eventLoopIdentifier: null,
     boardColor: 'white'
 }
@@ -68,7 +67,6 @@ class tetrisBlock {
             let xPrint = this.previousPosition[0] + this.previousRenderRules[i][0];
             let yPrint = this.previousPosition[1] + this.previousRenderRules[i][1];
             
-            tetrisBoard.gameBoard[xPrint][yPrint].occupied = false;
             tetrisBoard.gameBoard[xPrint][yPrint].ref.style.backgroundColor = emptyCellColor;
         }
 
@@ -81,7 +79,6 @@ class tetrisBlock {
             let xPrint = this.position[0] + this.renderRules[i][0];
             let yPrint = this.position[1] + this.renderRules[i][1];
             
-            tetrisBoard.gameBoard[xPrint][yPrint].occupied = true;
             tetrisBoard.gameBoard[xPrint][yPrint].ref.style.backgroundColor = filledCellColor;
         }
     }
@@ -89,18 +86,23 @@ class tetrisBlock {
         let attemptedXpos = this.position[0] + translationVector[0];
         let attemptedYpos = this.position[1] + translationVector[1];
 
-        let translationPass = false;
+        let translationFail = false;
 
         for(let i = 0; i < this.renderRules.length; i++) {
             let xPlacement = attemptedXpos + this.renderRules[i][0];
             let yPlacement = attemptedYpos + this.renderRules[i][1];
 
             if(xPlacement < 0 || xPlacement >= tetrisBoard.dimentions.columns || yPlacement < 0 || yPlacement >= tetrisBoard.dimentions.rows) {
-                translationPass = true;
+                translationFail = true;
+                break;
+            }
+
+            if(tetrisBoard.gameBoard[xPlacement][yPlacement].occupied) {
+                translationFail = true;
             }
         } 
 
-        if (translationPass) {
+        if (translationFail) {
             return false; 
         } else {
             this.position = [attemptedXpos, attemptedYpos];
@@ -126,9 +128,13 @@ class tetrisBlock {
 
         for(let i1 = 0; i1 < attemptedRenderRules.length; i1++) {
             let attemptedXpos = this.position[0] + attemptedRenderRules[i1][0];
-            let attemptedYpos = this.position[0] + attemptedRenderRules[i1][1];
+            let attemptedYpos = this.position[1] + attemptedRenderRules[i1][1];
 
             if(attemptedXpos < 0 || attemptedXpos >= tetrisBoard.dimentions.columns || attemptedYpos < 0 || attemptedYpos >= tetrisBoard.dimentions.rows) {
+                rotationFail = true;
+            }
+            
+            if(tetrisBoard.gameBoard[attemptedXpos][attemptedYpos].occupied) {
                 rotationFail = true;
             }
         }
@@ -142,18 +148,39 @@ class tetrisBlock {
             return true; 
         }
     }
+    occupy() {
+        for (let i1 = 0; i1 < this.renderRules.length; i1++) {
+            let occupyX = this.position[0] + this.renderRules[i1][0];
+            let occupyY = this.position[1] + this.renderRules[i1][1];
+
+            tetrisBoard.gameBoard[occupyX][occupyY].occupied = true;
+        }
+    }
 }
 
 document.addEventListener('keydown', (e1) => {
     if(tetrisBoard.currentTetrisObject != null && tetrisBoard.eventLoopIdentifier != null) {
-        switch(e1.key) {
-            case 'ArrowLeft':
-                tetrisBoard.currentTetrisObject.translate([-1, 0]);
-                tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
+        let key = e1.key.toLowerCase();
+        switch(true) {
+            case ('arrowleft' === key || 'a' === key):
+                if(tetrisBoard.currentTetrisObject.translate([-1, 0])) {
+                    tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
+                }
                 break;
-            case 'ArrowRight':
-                tetrisBoard.currentTetrisObject.translate([1, 0]);
-                tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
+            case ('arrowright' === key || 'd' === key):
+                if(tetrisBoard.currentTetrisObject.translate([1, 0])) {
+                    tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
+                }
+                break;
+            case ('arrowup' === key || 'w' === key):
+                if(tetrisBoard.currentTetrisObject.rotate(true)) {
+                    tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
+                }
+                break;
+            case ('arrowdown' === key || 's' === key):
+                if(tetrisBoard.currentTetrisObject.translate([0, 1])) {
+                    tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
+                }
                 break;
         }
     }
@@ -187,6 +214,9 @@ function eventLoop() {
     } else {
         if(tetrisBoard.currentTetrisObject.translate([0, 1])) {
             tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
+        } else {
+            tetrisBoard.currentTetrisObject.occupy();
+            tetrisBoard.currentTetrisObject = null;
         }
     }
 }
