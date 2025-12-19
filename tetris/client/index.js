@@ -99,6 +99,7 @@ class tetrisBlock {
 
             if(tetrisBoard.gameBoard[xPlacement][yPlacement].occupied) {
                 translationFail = true;
+                break;
             }
         } 
 
@@ -182,6 +183,19 @@ document.addEventListener('keydown', (e1) => {
                     tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
                 }
                 break;
+            case ('enter' === key):
+                let attemptAgain = true;
+                while (attemptAgain) {
+                    if (!tetrisBoard.currentTetrisObject.translate([0, 1])) {
+                        attemptAgain = false;
+                    }
+                }
+                tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
+
+                startStopEventLoop(0);
+                startStopEventLoop(1);
+                tetrisBoard.currentTetrisObject.occupy();
+                tetrisBoard.currentTetrisObject = null;
         }
     }
 });
