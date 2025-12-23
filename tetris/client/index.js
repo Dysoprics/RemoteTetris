@@ -1,9 +1,14 @@
-const tetrisBoard = {
-    dimentions: {rows: 20, columns: 10},
-    gameBoard: [],
-    currentTetrisObject: null,
-    eventLoopIdentifier: null,
-    boardColor: 'white'
+let tetrisBoard = null;
+
+
+class tetrisBoardOrigin {
+    constructor() {
+        this.dimentions = {rows: 20, columns: 10};
+        this.gameBoard = [];
+        this.currentTetrisObject = null;
+        this.eventLoopIdentifier = null;
+        this.boardColor = 'white';
+    }
 }
 
 class tetrisBlock {
@@ -11,46 +16,54 @@ class tetrisBlock {
         if (blockType === 0) {
             this.renderRules = [[-1, 0], [0, 0], [1, 0], [2, 0]]; //Peice:⠸
             this.rotationRules = 0;
+            this.spawnRules = -1;
             this.color = 'cyan';
 
         } else if (blockType === 1) {
             this.renderRules = [[-1, -1], [-1, 0], [0, 0], [1, 0]]; //Peice: ⠧
             this.rotationRules = 0;
+            this.spawnRules = 0;
             this.color = 'blue';
 
         } else if (blockType === 2) {
             this.renderRules = [[-1, 0], [0, 0], [1, 0], [1, -1]]; //Peice: ⠏
             this.rotationRules = 0;
+            this.spawnRules = 0;
             this.color = 'orange';
 
         } else if (blockType === 3) {
             this.renderRules = [[0, 0], [1, 0], [0, -1], [1, -1]]; //Peice: ⠛
             this.rotationRules = 1;
+            this.spawnRules = 0;
             this.color = 'yellow';
 
         } else if (blockType === 4) {
             this.renderRules = [[-1, 0], [0, 0], [0, -1], [1, -1]]; //Peice: ⠳
             this.rotationRules = 0;
+            this.spawnRules = 0;
             this.color = 'green';
 
         } else if (blockType === 5) {
             this.renderRules = [[-1, 0], [0, -1], [0, 0], [1, 0]]; //Peice: ⠺
             this.rotationRules = 0;
+            this.spawnRules = 0;
             this.color = 'purple';
 
         } else if (blockType === 6) {
             this.renderRules = [[-1, -1], [0, -1], [0, 0], [1, 0]]; //Peice: ⠞
             this.rotationRules = 0;
+            this.spawnRules = 0;
             this.color = 'red';
             
         } else {
             this.renderRules = [[0, 0]];
             this.rotationRules = 0;
+            this.spawnRules = 0;
             this.color = '#ff5454';
         }
 
         this.position = [0, 0];
-        this.translate([origin[0], origin[1]]);
+        this.occupationSuccess = this.translate([origin[0], origin[1] + this.spawnRules]);
 
         this.previousPosition = [origin[0], origin[1]];
 
@@ -193,16 +206,18 @@ document.addEventListener('keydown', (e1) => {
                 tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
 
                 startStopEventLoop(0);
-                startStopEventLoop(1);
                 tetrisBoard.currentTetrisObject.occupy();
                 tetrisBoard.currentTetrisObject = null;
+                startStopEventLoop(1);
+                eventLoop();
         }
     }
 });
 
 function initializeBoard() {
-    boardHtmlConstruct = '';
+    tetrisBoard = new tetrisBoardOrigin();
 
+    boardHtmlConstruct = '';
     for(let rows = 0; rows < tetrisBoard.dimentions.rows; rows++) {
         boardHtmlConstruct += `<div class="board-r board-r${rows}">\n`
         for(let cols = 0; cols < tetrisBoard.dimentions.columns; cols++) {
@@ -219,11 +234,22 @@ function initializeBoard() {
             tetrisBoard.gameBoard[x].push({occupied: false, ref: document.querySelector(`.board-r${y}-c${x}`)});
         }
     }
+
+    startStopEventLoop(1);
 }
 
 function eventLoop() {
     if(tetrisBoard.currentTetrisObject === null) {
         tetrisBoard.currentTetrisObject = new tetrisBlock(Math.floor(Math.random() * (6 + 1)), [4, 1]);
+        if (!tetrisBoard.currentTetrisObject.occupationSuccess) {
+            startStopEventLoop(0);
+            if (confirm('Game Over! Would you like to restart?')) {
+                resetGame();
+                return;
+            } else {
+                return;
+            }
+        }
         tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color); 
     } else {
         if(tetrisBoard.currentTetrisObject.translate([0, 1])) {
@@ -244,9 +270,10 @@ function startStopEventLoop(operation) {
     }
 }
 
-function runtime() {
+function resetGame() {
+    startStopEventLoop(0);
+    document.querySelector('.board').innerHTML = '';
     initializeBoard();
-    startStopEventLoop(1);
 }
 
-runtime();
+initializeBoard();
