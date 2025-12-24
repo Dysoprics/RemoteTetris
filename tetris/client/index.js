@@ -146,10 +146,12 @@ class tetrisBlock {
 
             if(attemptedXpos < 0 || attemptedXpos >= tetrisBoard.dimentions.columns || attemptedYpos < 0 || attemptedYpos >= tetrisBoard.dimentions.rows) {
                 rotationFail = true;
+                break;
             }
             
             if(tetrisBoard.gameBoard[attemptedXpos][attemptedYpos].occupied) {
                 rotationFail = true;
+                break;
             }
         }
 
@@ -193,7 +195,9 @@ document.addEventListener('keydown', (e1) => {
                 break;
             case ('arrowdown' === key || 's' === key):
                 if(tetrisBoard.currentTetrisObject.translate([0, 1])) {
+                    startStopEventLoop(0);
                     tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
+                    startStopEventLoop(1);
                 }
                 break;
             case ('enter' === key):
@@ -206,10 +210,8 @@ document.addEventListener('keydown', (e1) => {
                 tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
 
                 startStopEventLoop(0);
-                tetrisBoard.currentTetrisObject.occupy();
-                tetrisBoard.currentTetrisObject = null;
+                processPeiceSubmission();
                 startStopEventLoop(1);
-                eventLoop();
         }
     }
 });
@@ -255,10 +257,21 @@ function eventLoop() {
         if(tetrisBoard.currentTetrisObject.translate([0, 1])) {
             tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
         } else {
-            tetrisBoard.currentTetrisObject.occupy();
-            tetrisBoard.currentTetrisObject = null;
+            processPeiceSubmission();
         }
     }
+}
+
+function processPeiceSubmission() {
+    tetrisBoard.currentTetrisObject.occupy();
+    tetrisBoard.currentTetrisObject = null;
+
+    for (let i1 = 0; i1 < tetrisBoard.dimentions.rows; i1++) {
+        let rowCheck = [];
+        for (let i2 = 0; i2 < tetrisBoard.dimentions.columns; i2++) {
+            rowCheck.push(tetrisBoard.gameBoard[i2][tetrisBoard.dimentions.rows - i1].occupied);
+        }
+    } 
 }
 
 function startStopEventLoop(operation) {
