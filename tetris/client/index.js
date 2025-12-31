@@ -8,6 +8,7 @@ class tetrisBoardOrigin {
         this.currentTetrisObject = null;
         this.eventLoopIdentifier = null;
         this.boardColor = 'white';
+        this.updateSpeed = 600;
     }
 }
 
@@ -283,7 +284,6 @@ async function processPeiceSubmission() {
         }
     }
 
-    // I dunno man i'll fix it later.
     /*
     if (clearRows.length !== 0) {
         startStopEventLoop(0);
@@ -299,7 +299,7 @@ async function processPeiceSubmission() {
 
 function startStopEventLoop(operation) {
     if(operation === 1 && tetrisBoard.eventLoopIdentifier == null) {
-        tetrisBoard.eventLoopIdentifier = setInterval(eventLoop, 1000);
+        tetrisBoard.eventLoopIdentifier = setInterval(eventLoop, tetrisBoard.updateSpeed);
     } else if (operation === 0 && tetrisBoard.eventLoopIdentifier != null) {
         clearInterval(tetrisBoard.eventLoopIdentifier);
         tetrisBoard.eventLoopIdentifier = null;
