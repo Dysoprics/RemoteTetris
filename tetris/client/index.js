@@ -258,20 +258,43 @@ function eventLoop() {
             tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
         } else {
             processPeiceSubmission();
+            eventLoop();
         }
     }
 }
 
-function processPeiceSubmission() {
+async function processPeiceSubmission() {
     tetrisBoard.currentTetrisObject.occupy();
     tetrisBoard.currentTetrisObject = null;
 
+    let clearRows = [];
     for (let i1 = 0; i1 < tetrisBoard.dimentions.rows; i1++) {
-        let rowCheck = [];
+        let fullRowCheck = true;
+
         for (let i2 = 0; i2 < tetrisBoard.dimentions.columns; i2++) {
-            rowCheck.push(tetrisBoard.gameBoard[i2][tetrisBoard.dimentions.rows - i1].occupied);
+            if (!tetrisBoard.gameBoard[i2][(tetrisBoard.dimentions.rows - 1) - i1].occupied) {
+                fullRowCheck = false;
+                break;
+            }
         }
-    } 
+
+        if (fullRowCheck) {
+            clearRows.push(i1);
+        }
+    }
+
+    // I dunno man i'll fix it later.
+    /*
+    if (clearRows.length !== 0) {
+        startStopEventLoop(0);
+        for (let i1 = 0; i1 < tetrisBoard.dimentions.columns; i1++) {
+            for (let i2 = 0; i2 < clearRows.length; i2++) {
+                tetrisBoard.gameBoard[i1][clearRows[i2]].ref.style.backgroundColor = 'white';
+            }
+            await new Promise(r => setTimeout(r, 100));
+        }
+    }
+    */
 }
 
 function startStopEventLoop(operation) {
