@@ -9,6 +9,7 @@ class tetrisBoardOrigin {
         this.eventLoopIdentifier = null;
         this.boardColor = 'white';
         this.updateSpeed = 800;
+        this.previousBlock = null;
     }
 }
 
@@ -246,8 +247,19 @@ function initializeBoard() {
 }
 
 function eventLoop() {
-    if(tetrisBoard.currentTetrisObject === null) {
-        tetrisBoard.currentTetrisObject = new tetrisBlock(Math.floor(Math.random() * (6 + 1)), [4, 1]);
+    if (tetrisBoard.currentTetrisObject === null) {
+        let randomNum = Math.floor(Math.random() * (6 + 1));
+        let pass = true;
+        while (pass) {
+            if (randomNum !== tetrisBoard.previousBlock) {
+                pass = false;
+            } else {
+                randomNum = Math.floor(Math.random() * (6 + 1));
+            }
+        }
+        tetrisBoard.previousBlock = randomNum;
+        tetrisBoard.currentTetrisObject = new tetrisBlock(randomNum, [4, 1]);
+
         if (!tetrisBoard.currentTetrisObject.occupationSuccess) {
             startStopEventLoop(0);
             if (confirm('Game Over! Would you like to restart?')) {
