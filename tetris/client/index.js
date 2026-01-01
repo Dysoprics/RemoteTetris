@@ -8,7 +8,7 @@ class tetrisBoardOrigin {
         this.currentTetrisObject = null;
         this.eventLoopIdentifier = null;
         this.boardColor = 'white';
-        this.updateSpeed = 600;
+        this.updateSpeed = 800;
     }
 }
 
@@ -66,7 +66,7 @@ class tetrisBlock {
         this.position = [0, 0];
         this.occupationSuccess = this.translate([origin[0], origin[1] + this.spawnRules]);
 
-        this.previousPosition = [origin[0], origin[1]];
+        this.previousPosition = [origin[0], origin[1] + this.spawnRules];
 
         this.previousRenderRules = [];
         for(let i = 0; i < this.renderRules.length; i++) {
@@ -264,7 +264,7 @@ function eventLoop() {
     }
 }
 
-async function processPeiceSubmission() {
+function processPeiceSubmission() {
     tetrisBoard.currentTetrisObject.occupy();
     tetrisBoard.currentTetrisObject = null;
 
@@ -273,7 +273,7 @@ async function processPeiceSubmission() {
         let fullRowCheck = true;
 
         for (let i2 = 0; i2 < tetrisBoard.dimentions.columns; i2++) {
-            if (!tetrisBoard.gameBoard[i2][(tetrisBoard.dimentions.rows - 1) - i1].occupied) {
+            if (!tetrisBoard.gameBoard[i2][i1].occupied) {
                 fullRowCheck = false;
                 break;
             }
@@ -284,22 +284,32 @@ async function processPeiceSubmission() {
         }
     }
 
-    /*
     if (clearRows.length !== 0) {
-        startStopEventLoop(0);
         for (let i1 = 0; i1 < tetrisBoard.dimentions.columns; i1++) {
             for (let i2 = 0; i2 < clearRows.length; i2++) {
                 tetrisBoard.gameBoard[i1][clearRows[i2]].ref.style.backgroundColor = 'white';
+                tetrisBoard.gameBoard[i1][clearRows[i2]].occupied = false;
             }
-            await new Promise(r => setTimeout(r, 100));
         }
+
+        for (let i1 = 0; i1 < clearRows.length; i1++) {
+            for (let i2 = 0; i2 < clearRows[i1]; i2++) {
+                for (let i3 = 0; i3 < tetrisBoard.dimentions.columns; i3++) {
+                    let rowRef = (clearRows[i1] - i2) - 1;
+
+                    tetrisBoard.gameBoard[i3][rowRef + 1].occupied = tetrisBoard.gameBoard[i3][rowRef].occupied;
+                    tetrisBoard.gameBoard[i3][rowRef + 1].ref.style.backgroundColor = tetrisBoard.gameBoard[i3][rowRef].ref.style.backgroundColor;
+                }
+            }
+        }
+
+        clearRows = [];
     }
-    */
 }
 
 function startStopEventLoop(operation) {
     if(operation === 1 && tetrisBoard.eventLoopIdentifier == null) {
-        tetrisBoard.eventLoopIdentifier = setInterval(eventLoop, tetrisBoard.updateSpeed);
+        return tetrisBoard.eventLoopIdentifier = setInterval(eventLoop, tetrisBoard.updateSpeed);
     } else if (operation === 0 && tetrisBoard.eventLoopIdentifier != null) {
         clearInterval(tetrisBoard.eventLoopIdentifier);
         tetrisBoard.eventLoopIdentifier = null;
