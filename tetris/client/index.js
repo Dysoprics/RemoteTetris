@@ -176,6 +176,10 @@ class tetrisBlock {
 }
 
 document.addEventListener('keydown', (e1) => {
+    keyDownEvent(e1);
+});
+
+function keyDownEvent(e1) {
     if(tetrisBoard.currentTetrisObject != null && tetrisBoard.eventLoopIdentifier != null) {
         let key = e1.key.toLowerCase();
         switch(true) {
@@ -215,7 +219,7 @@ document.addEventListener('keydown', (e1) => {
                 startStopEventLoop(1);
         }
     }
-});
+}
 
 function initializeBoard() {
     tetrisBoard = new tetrisBoardOrigin();
