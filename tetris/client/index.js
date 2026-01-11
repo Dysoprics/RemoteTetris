@@ -217,7 +217,10 @@ function keyDownEvent(e1) {
 
                 startStopEventLoop(0);
                 processPeiceSubmission();
-                startStopEventLoop(1);
+                setTimeout(() => {
+                    eventLoop();
+                    startStopEventLoop(1);
+                }, 200);
         }
     }
 }

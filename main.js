@@ -1,7 +1,6 @@
 const http = require('http');
 const fs = require('fs');
 
-const ip = '127.0.0.1';
 const port = '3000';
 
 const server = http.createServer((req, res) => {
@@ -35,9 +34,9 @@ const server = http.createServer((req, res) => {
                 res.end();
             });
         }
-        else if (req.url === '/game/icon') {
+        else if (req.url === '/game/icon.png') {
             fs.readFile('assets/tetris.png', (err, data) => {
-                res.writeHead(200, {'Content-Type': 'text/html'});
+                res.writeHead(200, {'Content-Type': 'image/png'});
                 res.write(data);
                 res.end();
             });
@@ -66,7 +65,7 @@ const server = http.createServer((req, res) => {
                 res.end();
             });
         }
-        else if (req.url === '/command/icon') {
+        else if (req.url === '/command/icon.png') {
             fs.readFile('assets/tetris.png', (err, data) => {
                 res.writeHead(200, {'Content-Type': 'text/html'});
                 res.write(data);
@@ -84,4 +83,4 @@ const server = http.createServer((req, res) => {
     }
 });
 
-server.listen(port, ip);
+server.listen(port);

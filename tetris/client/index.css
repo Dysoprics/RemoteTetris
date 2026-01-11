@@ -1,3 +1,8 @@
+.game {
+    display: flex;
+    justify-content: center;
+}
+
 .board {
     border: 1px solid black;
 
@@ -12,7 +17,7 @@
     border: 1px solid black;
     display: inline-block;
 
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     margin: 0;
 }
