@@ -1,0 +1,58 @@
+[
+    {
+        "characterRep": "⠸",
+        "renderRules": [[-1, 0], [0, 0], [1, 0], [2, 0]],
+        "rotationRules": 0,
+        "spawnRules": -1,
+        "color": "cyan"
+    },
+    {
+        "characterRep": "⠧",
+        "renderRules": [[-1, -1], [-1, 0], [0, 0], [1, 0]],
+        "rotationRules": 0,
+        "spawnRules": 0,
+        "color": "blue"
+    },
+    {
+        "characterRep": "⠏",
+        "renderRules": [[-1, 0], [0, 0], [1, 0], [1, -1]],
+        "rotationRules": 0,
+        "spawnRules": 0,
+        "color": "orange"
+    },
+    {
+        "characterRep": "⠛",
+        "renderRules": [[0, 0], [1, 0], [0, -1], [1, -1]],
+        "rotationRules": 1,
+        "spawnRules": 0,
+        "color": "yellow"
+    },
+    {
+        "characterRep": "⠳",
+        "renderRules": [[-1, 0], [0, 0], [0, -1], [1, -1]],
+        "rotationRules": 0,
+        "spawnRules": 0,
+        "color": "green"
+    },
+    {
+        "characterRep": "⠺",
+        "renderRules": [[-1, 0], [0, -1], [0, 0], [1, 0]],
+        "rotationRules": 0,
+        "spawnRules": 0,
+        "color": "purple"
+    },
+    {
+        "characterRep": "⠞",
+        "renderRules": [[-1, -1], [0, -1], [0, 0], [1, 0]],
+        "rotationRules": 0,
+        "spawnRules": 0,
+        "color": "red"
+    },
+    {
+        "characterRep": ".",
+        "renderRules": [[0, 0]],
+        "rotationRules": 0,
+        "spawnRules": 0,
+        "color": "#ff5454"
+    }
+]

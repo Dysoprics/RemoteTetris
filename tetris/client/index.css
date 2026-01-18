@@ -21,3 +21,13 @@
     height: 22px;
     margin: 0;
 }
+
+.info {
+    margin-left: 10px;
+}
+
+.preview {
+    border: 2px solid black;
+
+    padding: 5px;
+}

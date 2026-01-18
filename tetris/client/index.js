@@ -1,7 +1,10 @@
+const canvas = document.querySelector('.preview');
+/** @type {CanvasRenderingContext2D} */
+const ctx = canvas.getContext('2d');
+
 let tetrisBoard = null;
 
-
-class tetrisBoardOrigin {
+class tetrisGame {
     constructor() {
         this.dimentions = {rows: 20, columns: 10};
         this.gameBoard = [];
@@ -9,7 +12,8 @@ class tetrisBoardOrigin {
         this.eventLoopIdentifier = null;
         this.boardColor = 'white';
         this.updateSpeed = 800;
-        this.previousBlock = null;
+        this.currentBlock = null;
+        this.nextBlock = null;
     }
 }
 
@@ -226,7 +230,7 @@ function keyDownEvent(e1) {
 }
 
 function initializeBoard() {
-    tetrisBoard = new tetrisBoardOrigin();
+    tetrisBoard = new tetrisGame();
 
     boardHtmlConstruct = '';
     for(let rows = 0; rows < tetrisBoard.dimentions.rows; rows++) {
@@ -251,17 +255,22 @@ function initializeBoard() {
 
 function eventLoop() {
     if (tetrisBoard.currentTetrisObject === null) {
+        if (tetrisBoard.currentBlock === null) {
+            tetrisBoard.currentBlock = Math.floor(Math.random() * (6 + 1));
+        } else {
+            tetrisBoard.currentBlock = tetrisBoard.nextBlock;
+        }
         let randomNum = Math.floor(Math.random() * (6 + 1));
         let pass = true;
         while (pass) {
-            if (randomNum !== tetrisBoard.previousBlock) {
+            if (randomNum !== tetrisBoard.currentBlock) {
                 pass = false;
             } else {
                 randomNum = Math.floor(Math.random() * (6 + 1));
             }
         }
-        tetrisBoard.previousBlock = randomNum;
-        tetrisBoard.currentTetrisObject = new tetrisBlock(randomNum, [4, 1]);
+        tetrisBoard.nextBlock = randomNum;
+        tetrisBoard.currentTetrisObject = new tetrisBlock(tetrisBoard.currentBlock, [4, 1]);
 
         if (!tetrisBoard.currentTetrisObject.occupationSuccess) {
             startStopEventLoop(0);
@@ -281,6 +290,10 @@ function eventLoop() {
             eventLoop();
         }
     }
+}
+
+function drawNextBlock() {
+    
 }
 
 function processPeiceSubmission() {
