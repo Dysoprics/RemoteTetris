@@ -2,13 +2,8 @@ const canvas = document.querySelector('.preview');
 /** @type {CanvasRenderingContext2D} */
 const ctx = canvas.getContext('2d');
 
-const canvas = document.querySelector('.preview');
-/** @type {CanvasRenderingContext2D} */
-const ctx = canvas.getContext('2d');
-
 let tetrisBoard = null;
 
-class tetrisGame {
 class tetrisGame {
     constructor() {
         this.dimentions = {rows: 20, columns: 10};
@@ -17,8 +12,6 @@ class tetrisGame {
         this.eventLoopIdentifier = null;
         this.boardColor = 'white';
         this.updateSpeed = 800;
-        this.currentBlock = null;
-        this.nextBlock = null;
         this.currentBlock = null;
         this.nextBlock = null;
     }
@@ -238,7 +231,6 @@ function keyDownEvent(e1) {
 
 function initializeBoard() {
     tetrisBoard = new tetrisGame();
-    tetrisBoard = new tetrisGame();
 
     boardHtmlConstruct = '';
     for(let rows = 0; rows < tetrisBoard.dimentions.rows; rows++) {
@@ -268,15 +260,10 @@ function eventLoop() {
         } else {
             tetrisBoard.currentBlock = tetrisBoard.nextBlock;
         }
-        if (tetrisBoard.currentBlock === null) {
-            tetrisBoard.currentBlock = Math.floor(Math.random() * (6 + 1));
-        } else {
-            tetrisBoard.currentBlock = tetrisBoard.nextBlock;
-        }
+
         let randomNum = Math.floor(Math.random() * (6 + 1));
         let pass = true;
         while (pass) {
-            if (randomNum !== tetrisBoard.currentBlock) {
             if (randomNum !== tetrisBoard.currentBlock) {
                 pass = false;
             } else {
@@ -284,6 +271,7 @@ function eventLoop() {
             }
         }
         tetrisBoard.nextBlock = randomNum;
+        
         tetrisBoard.currentTetrisObject = new tetrisBlock(tetrisBoard.currentBlock, [4, 1]);
 
         if (!tetrisBoard.currentTetrisObject.occupationSuccess) {
@@ -304,10 +292,6 @@ function eventLoop() {
             eventLoop();
         }
     }
-}
-
-function drawNextBlock() {
-    
 }
 
 function processPeiceSubmission() {
