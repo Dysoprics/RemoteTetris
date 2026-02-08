@@ -4,6 +4,7 @@ const fs = require('fs');
 const port = '3000';
 
 const server = http.createServer((req, res) => {
+    console.log(req.url);
     if (req.method === 'GET') {
         if (req.url === '/') {
             res.writeHead(308, {'Content-Type': 'text/html'});
@@ -30,6 +31,13 @@ const server = http.createServer((req, res) => {
         else if (req.url === '/game/index.js') {
             fs.readFile('tetris/client/index.js', (err, data) => {
                 res.writeHead(200, {'Content-Type': 'application/javascript'});
+                res.write(data);
+                res.end();
+            });
+        }
+        else if (req.url === '/game/renderRules.json') {
+            fs.readFile('tetris/client/renderRules.json', (err, data) => {
+                res.writeHead(200, {'Content-Type': 'application/json'});
                 res.write(data);
                 res.end();
             });

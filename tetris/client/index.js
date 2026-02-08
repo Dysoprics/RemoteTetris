@@ -3,6 +3,7 @@ const canvas = document.querySelector('.preview');
 const ctx = canvas.getContext('2d');
 
 let tetrisBoard = null;
+let renderRulesData = null;
 
 class tetrisGame {
     constructor() {
@@ -18,55 +19,11 @@ class tetrisGame {
 }
 
 class tetrisBlock {
-    constructor(blockType, origin) {
-        if (blockType === 0) {
-            this.renderRules = [[-1, 0], [0, 0], [1, 0], [2, 0]]; //Peice:⠸
-            this.rotationRules = 0;
-            this.spawnRules = -1;
-            this.color = 'cyan';
-
-        } else if (blockType === 1) {
-            this.renderRules = [[-1, -1], [-1, 0], [0, 0], [1, 0]]; //Peice: ⠧
-            this.rotationRules = 0;
-            this.spawnRules = 0;
-            this.color = 'blue';
-
-        } else if (blockType === 2) {
-            this.renderRules = [[-1, 0], [0, 0], [1, 0], [1, -1]]; //Peice: ⠏
-            this.rotationRules = 0;
-            this.spawnRules = 0;
-            this.color = 'orange';
-
-        } else if (blockType === 3) {
-            this.renderRules = [[0, 0], [1, 0], [0, -1], [1, -1]]; //Peice: ⠛
-            this.rotationRules = 1;
-            this.spawnRules = 0;
-            this.color = 'yellow';
-
-        } else if (blockType === 4) {
-            this.renderRules = [[-1, 0], [0, 0], [0, -1], [1, -1]]; //Peice: ⠳
-            this.rotationRules = 0;
-            this.spawnRules = 0;
-            this.color = 'green';
-
-        } else if (blockType === 5) {
-            this.renderRules = [[-1, 0], [0, -1], [0, 0], [1, 0]]; //Peice: ⠺
-            this.rotationRules = 0;
-            this.spawnRules = 0;
-            this.color = 'purple';
-
-        } else if (blockType === 6) {
-            this.renderRules = [[-1, -1], [0, -1], [0, 0], [1, 0]]; //Peice: ⠞
-            this.rotationRules = 0;
-            this.spawnRules = 0;
-            this.color = 'red';
-            
-        } else {
-            this.renderRules = [[0, 0]];
-            this.rotationRules = 0;
-            this.spawnRules = 0;
-            this.color = '#ff5454';
-        }
+    constructor(blockInfo, origin) {
+        this.renderRules = structuredClone(blockInfo.renderRules);
+        this.rotationRules = blockInfo.rotationRules;
+        this.spawnRules = blockInfo.spawnRules;
+        this.color = blockInfo.color;
 
         this.position = [0, 0];
         this.occupationSuccess = this.translate([origin[0], origin[1] + this.spawnRules]);
@@ -222,14 +179,14 @@ function keyDownEvent(e1) {
                 startStopEventLoop(0);
                 processPeiceSubmission();
                 setTimeout(() => {
-                    eventLoop();
                     startStopEventLoop(1);
+                    eventLoop();
                 }, 200);
         }
     }
 }
 
-function initializeBoard() {
+async function initializeBoard() {
     tetrisBoard = new tetrisGame();
 
     boardHtmlConstruct = '';
@@ -250,7 +207,17 @@ function initializeBoard() {
         }
     }
 
-    startStopEventLoop(1);
+    if (renderRulesData === null) {
+        try {
+            renderRulesData = await fetch('/game/renderRules.json').then((res) => { return res.json(); });
+
+            startStopEventLoop(1);
+        } catch (err) {
+            console.error(`Failed initialization: ${err}`);
+        }
+    } else {
+        startStopEventLoop(1);
+    }
 }
 
 function eventLoop() {
@@ -262,17 +229,17 @@ function eventLoop() {
         }
 
         let randomNum = Math.floor(Math.random() * (6 + 1));
-        let pass = true;
-        while (pass) {
+        let passer = true;
+        while (passer) {
             if (randomNum !== tetrisBoard.currentBlock) {
-                pass = false;
+                passer = false;
             } else {
                 randomNum = Math.floor(Math.random() * (6 + 1));
             }
         }
         tetrisBoard.nextBlock = randomNum;
         
-        tetrisBoard.currentTetrisObject = new tetrisBlock(tetrisBoard.currentBlock, [4, 1]);
+        tetrisBoard.currentTetrisObject = new tetrisBlock(renderRulesData[tetrisBoard.currentBlock], [4, 1], tetrisBoard.currentBlock);
 
         if (!tetrisBoard.currentTetrisObject.occupationSuccess) {
             startStopEventLoop(0);
