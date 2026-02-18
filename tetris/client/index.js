@@ -15,6 +15,8 @@ class tetrisGame {
         this.updateSpeed = 800;
         this.currentBlock = null;
         this.nextBlock = null;
+
+        this.drawSize = 22;
     }
 }
 
@@ -239,7 +241,7 @@ function eventLoop() {
         }
         tetrisBoard.nextBlock = randomNum;
         
-        tetrisBoard.currentTetrisObject = new tetrisBlock(renderRulesData[tetrisBoard.currentBlock], [4, 1], tetrisBoard.currentBlock);
+        tetrisBoard.currentTetrisObject = new tetrisBlock(renderRulesData[tetrisBoard.currentBlock], [4, 1]);
 
         if (!tetrisBoard.currentTetrisObject.occupationSuccess) {
             startStopEventLoop(0);
@@ -251,13 +253,62 @@ function eventLoop() {
             }
         }
         tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color); 
+
+        drawNextPeiceFrame();
     } else {
-        if(tetrisBoard.currentTetrisObject.translate([0, 1])) {
+        if (tetrisBoard.currentTetrisObject.translate([0, 1])) {
             tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
         } else {
             processPeiceSubmission();
             eventLoop();
         }
+    }
+}
+
+function drawNextPeiceFrame() {
+    const nextBlockData = renderRulesData[tetrisBoard.nextBlock];
+
+    const renderCoordinates = { x: [], y: [] };
+    for (let i1 = 0; i1 < nextBlockData.renderRules.length; i1++) {
+        if (!renderCoordinates.x.includes(nextBlockData.renderRules[i1][0])) {
+            renderCoordinates.x.push(nextBlockData.renderRules[i1][0]);
+        }
+        if (!renderCoordinates.y.includes(nextBlockData.renderRules[i1][1])) {
+            renderCoordinates.y.push(nextBlockData.renderRules[i1][1]);
+        }
+    }
+
+    const blockEdgeTransformations = {
+        x: (renderCoordinates.x.reduce((prev, curr) => prev < curr ? prev : curr)),
+        y: (renderCoordinates.y.reduce((prev, curr) => prev < curr ? prev : curr))
+    };
+
+    const blockCenterTransformations = {
+        x: ( (Math.abs(renderCoordinates.x.reduce((prev, curr) => prev > curr ? prev : curr) - blockEdgeTransformations.x) + 1 ) / 2 ),
+        y: ( (Math.abs(renderCoordinates.y.reduce((prev, curr) => prev > curr ? prev : curr) - blockEdgeTransformations.y) + 1 ) / 2 )
+    };
+
+    ctx.reset();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+
+    // DEBUG DOT
+    ctx.fillStyle = 'red';
+    ctx.fillRect(0, 0, 3, 3);
+    // DEBUG DOT
+
+    ctx.translate(
+        (-blockEdgeTransformations.x - blockCenterTransformations.x) * tetrisBoard.drawSize, 
+        (-blockEdgeTransformations.y - blockCenterTransformations.y) * tetrisBoard.drawSize
+    );
+
+    for (let i1 = 0; i1 < nextBlockData.renderRules.length; i1++) {
+        ctx.strokeStyle = 'green';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(
+            nextBlockData.renderRules[i1][0] * tetrisBoard.drawSize, 
+            nextBlockData.renderRules[i1][1] * tetrisBoard.drawSize, 
+            tetrisBoard.drawSize, tetrisBoard.drawSize
+        );
     }
 }
 

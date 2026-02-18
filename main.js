@@ -4,7 +4,7 @@ const fs = require('fs');
 const port = '3000';
 
 const server = http.createServer((req, res) => {
-    console.log(req.url);
+    console.log(`\x1b[34m${req.socket.remoteAddress} \x1b[0m> \x1b[32m${req.method} \x1b[31m${req.url}`);
     if (req.method === 'GET') {
         if (req.url === '/') {
             res.writeHead(308, {'Content-Type': 'text/html'});
