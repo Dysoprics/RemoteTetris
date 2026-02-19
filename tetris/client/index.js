@@ -7,6 +7,7 @@ let renderRulesData = null;
 
 class tetrisGame {
     constructor() {
+        // Internal
         this.dimentions = {rows: 20, columns: 10};
         this.gameBoard = [];
         this.currentTetrisObject = null;
@@ -16,6 +17,7 @@ class tetrisGame {
         this.currentBlock = null;
         this.nextBlock = null;
 
+        // External
         this.drawSize = 22;
     }
 }
@@ -179,7 +181,7 @@ function keyDownEvent(e1) {
                 tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
 
                 startStopEventLoop(0);
-                processPeiceSubmission();
+                processPieceSubmission();
                 setTimeout(() => {
                     startStopEventLoop(1);
                     eventLoop();
@@ -225,18 +227,18 @@ async function initializeBoard() {
 function eventLoop() {
     if (tetrisBoard.currentTetrisObject === null) {
         if (tetrisBoard.currentBlock === null) {
-            tetrisBoard.currentBlock = Math.floor(Math.random() * (6 + 1));
+            tetrisBoard.currentBlock = Math.floor(Math.random() * renderRulesData.length);
         } else {
             tetrisBoard.currentBlock = tetrisBoard.nextBlock;
         }
 
-        let randomNum = Math.floor(Math.random() * (6 + 1));
+        let randomNum = Math.floor(Math.random() * renderRulesData.length);
         let passer = true;
         while (passer) {
             if (randomNum !== tetrisBoard.currentBlock) {
                 passer = false;
             } else {
-                randomNum = Math.floor(Math.random() * (6 + 1));
+                randomNum = Math.floor(Math.random() * renderRulesData.length);
             }
         }
         tetrisBoard.nextBlock = randomNum;
@@ -254,18 +256,18 @@ function eventLoop() {
         }
         tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color); 
 
-        drawNextPeiceFrame();
+        drawNextPieceFrame();
     } else {
         if (tetrisBoard.currentTetrisObject.translate([0, 1])) {
             tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
         } else {
-            processPeiceSubmission();
+            processPieceSubmission();
             eventLoop();
         }
     }
 }
 
-function drawNextPeiceFrame() {
+function drawNextPieceFrame() {
     const nextBlockData = renderRulesData[tetrisBoard.nextBlock];
 
     const renderCoordinates = { x: [], y: [] };
@@ -291,18 +293,20 @@ function drawNextPeiceFrame() {
     ctx.reset();
     ctx.translate(canvas.width / 2, canvas.height / 2);
 
-    // DEBUG DOT
-    ctx.fillStyle = 'red';
-    ctx.fillRect(0, 0, 3, 3);
-    // DEBUG DOT
-
     ctx.translate(
         (-blockEdgeTransformations.x - blockCenterTransformations.x) * tetrisBoard.drawSize, 
         (-blockEdgeTransformations.y - blockCenterTransformations.y) * tetrisBoard.drawSize
     );
 
     for (let i1 = 0; i1 < nextBlockData.renderRules.length; i1++) {
-        ctx.strokeStyle = 'green';
+        ctx.fillStyle = nextBlockData.color;
+        ctx.fillRect(
+            nextBlockData.renderRules[i1][0] * tetrisBoard.drawSize, 
+            nextBlockData.renderRules[i1][1] * tetrisBoard.drawSize, 
+            tetrisBoard.drawSize, tetrisBoard.drawSize
+        );
+        
+        ctx.strokeStyle = 'black';
         ctx.lineWidth = 2;
         ctx.strokeRect(
             nextBlockData.renderRules[i1][0] * tetrisBoard.drawSize, 
@@ -312,7 +316,7 @@ function drawNextPeiceFrame() {
     }
 }
 
-function processPeiceSubmission() {
+function processPieceSubmission() {
     tetrisBoard.currentTetrisObject.occupy();
     tetrisBoard.currentTetrisObject = null;
 

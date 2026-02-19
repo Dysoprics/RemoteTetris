@@ -47,12 +47,5 @@
         "rotationRules": 0,
         "spawnRules": 0,
         "color": "red"
-    },
-    {
-        "characterRep": ".",
-        "renderRules": [[0, 0]],
-        "rotationRules": 0,
-        "spawnRules": 0,
-        "color": "#ff5454"
     }
 ]

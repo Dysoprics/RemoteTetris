@@ -31,3 +31,23 @@
 
     padding: 5px;
 }
+
+.figures {
+    border: 2px solid black;
+
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+.figures-lines {
+    border: 2px solid black;
+
+    padding: 4px;
+    margin: 0;
+}
+
+.options {
+    border: 2px solid black;
+
+    padding: 5px;
+}
