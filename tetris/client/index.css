@@ -3,6 +3,7 @@
     justify-content: center;
 }
 
+/* Game Board */
 .board {
     border: 1px solid black;
 
@@ -22,6 +23,7 @@
     margin: 0;
 }
 
+/* Figures and Interaction */
 .info {
     margin-left: 10px;
 }
@@ -39,11 +41,17 @@
     margin-bottom: 5px;
 }
 
+.figures-level,
+.figures-score,
 .figures-lines {
     border: 2px solid black;
 
     padding: 4px;
     margin: 0;
+    margin-bottom: 2px;
+}
+.figures-lines {
+    margin-bottom: 0;
 }
 
 .options {

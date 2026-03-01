@@ -5,18 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tetris</title>
     <link rel="stylesheet" href="/game/index.css">
-    <link rel="icon" type="image/png" href="/game/icon.png">
+    <link rel="icon" type="image/png" href="/assets/tetris.png">
 </head>
 <body>
     <div class="game">
         <div class="board"></div>
         <div class="info">
-            <canvas class="preview" width="100" height="100"></canvas>
+            <canvas class="preview" width="120" height="120"></canvas>
             <div class="figures">
+                <p class="figures-level">Level: <span class="figures-level-num">1</span></p>
+                <p class="figures-score">Score: <span class="figures-score-num">0</span></p>
                 <p class="figures-lines">Lines: <span class="figures-lines-num">0</span></p>
             </div>
             <div class="options">
-                
+                <button>Pause</button><br>
+                <button>Reset</button><br>
+                <button>Settings</button>
             </div>
         </div>
     </div>

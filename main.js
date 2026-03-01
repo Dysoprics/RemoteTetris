@@ -1,16 +1,44 @@
 const http = require('http');
 const fs = require('fs');
+const path = require('node:path');
 
 const port = '3000';
 
 const server = http.createServer((req, res) => {
-    console.log(`\x1b[34m${req.socket.remoteAddress} \x1b[0m> \x1b[32m${req.method} \x1b[31m${req.url}`);
+    console.log(`\x1b[34m${req.socket.remoteAddress} \x1b[0m> \x1b[32m${req.method} \x1b[31m${req.url}\x1b[0m`);
     if (req.method === 'GET') {
         if (req.url === '/') {
             res.writeHead(308, {'Content-Type': 'text/html'});
             res.write('<p style="margin: 0; display: inline-block;">You are being redirected... (Press any key to cancel)</p> <button onclick="window.location.href=`/game`">Go to /game</button> <script>const escape = setTimeout(() => { window.location.href=`/game`}, 1000); document.addEventListener("keydown", (e1) => {clearInterval(escape); alert("Redirection cancelled.");});</script>');
             res.end();
         } 
+
+
+        
+        else if (req.url.startsWith('/assets/')) {
+            fs.readFile(req.url.substring(1), (err, data) => {
+                if (err) {
+                    res.writeHead(404, {'Content-Type': 'application/json'});
+                    res.write(`{"status": 404}, {"error": ${err}}`);
+                    res.end();
+                } else {
+                    let contentType = '';
+                    switch (path.extname(req.url.substring(1))) {
+                        case '.png':
+                            contentType = 'image/png';
+                            break;
+                        default:
+                            contentType = 'text/plain';
+                            break;
+                    };
+
+                    res.writeHead(200, {'Content-Type': contentType});
+                    res.write(data);
+                    res.end();
+                }
+            });
+        }
+        
         
         
         
@@ -42,13 +70,6 @@ const server = http.createServer((req, res) => {
                 res.end();
             });
         }
-        else if (req.url === '/game/icon.png') {
-            fs.readFile('assets/tetris.png', (err, data) => {
-                res.writeHead(200, {'Content-Type': 'image/png'});
-                res.write(data);
-                res.end();
-            });
-        }
 
 
 
@@ -69,13 +90,6 @@ const server = http.createServer((req, res) => {
         else if (req.url === '/command/index.js') {
             fs.readFile('tetris/commander/index.js', (err, data) => {
                 res.writeHead(200, {'Content-Type': 'application/javascript'});
-                res.write(data);
-                res.end();
-            });
-        }
-        else if (req.url === '/command/icon.png') {
-            fs.readFile('assets/tetris.png', (err, data) => {
-                res.writeHead(200, {'Content-Type': 'text/html'});
                 res.write(data);
                 res.end();
             });
