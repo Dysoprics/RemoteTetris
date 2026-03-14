@@ -28,15 +28,13 @@ class tetrisGame {
             lineClearScore: {
                 1: 100, 2: 300, 3: 500, 4: 800 // { Lines Cleared: Score Multiplier }
             },
-            speed: {
-                1: 800 // { Level: Speed }
-            },
-            combo: 50
+            speedInterval: 50,
+            comboMultiplier: 50
         } 
         this.level = 1;
         this.score = 0;
         this.linesCleared = 0;
-        this.lineClearComboMultiplier = 0;
+        this.lineClearCombo = 0;
     }
 }
 
@@ -288,7 +286,9 @@ function eventLoop() {
         if (tetrisBoard.currentTetrisObject.translate([0, 1])) {
             tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
         } else {
+            startStopEventLoop(0);
             processPieceSubmission();
+            startStopEventLoop(1);
             eventLoop();
         }
     }
@@ -370,16 +370,19 @@ function processPieceSubmission() {
         linesEle.innerText = tetrisBoard.linesCleared.toString();
 
         tetrisBoard.score += tetrisBoard.multipliers.lineClearScore[clearRows.length] * tetrisBoard.level;
-        tetrisBoard.score += tetrisBoard.multipliers.combo * tetrisBoard.lineClearComboMultiplier * tetrisBoard.level;
+        tetrisBoard.score += tetrisBoard.multipliers.comboMultiplier * tetrisBoard.lineClearCombo * tetrisBoard.level;
         scoreEle.innerText = tetrisBoard.score.toString();
 
-        tetrisBoard.lineClearComboMultiplier++;
+        tetrisBoard.lineClearCombo++;
 
         // Leveling Up!
-        const trueLevel = Math.floor(tetrisBoard.linesCleared / 10);
+        const trueLevel = Math.floor(tetrisBoard.linesCleared / 10) + 1;
         if (tetrisBoard.level !== trueLevel) {
             tetrisBoard.level = trueLevel;
-            levelEle.innerText = (tetrisBoard.level + 1).toString();
+            levelEle.innerText = (tetrisBoard.level).toString();
+            if (trueLevel <= 15) {
+                tetrisBoard.updateSpeed -= tetrisBoard.multipliers.speedInterval;
+            }
         }
         // Leveling Up!
 
@@ -404,7 +407,7 @@ function processPieceSubmission() {
 
         clearRows = [];
     } else {
-        tetrisBoard.lineClearComboMultiplier = 0;
+        tetrisBoard.lineClearCombo = 0;
     }
 }
 
