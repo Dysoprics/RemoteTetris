@@ -56,6 +56,14 @@
 
 .options {
     border: 2px solid black;
+    display: flex;
+    justify-content: space-between;
 
     padding: 5px;
+}
+
+.options-btn-img { 
+    width: 18px;
+    
+    margin-top: 2px;
 }

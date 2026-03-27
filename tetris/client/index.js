@@ -157,9 +157,13 @@ class tetrisBlock {
     }
 }
 
+
+
 document.addEventListener('keydown', (e1) => {
     keyDownEvent(e1);
 });
+
+
 
 function keyDownEvent(e1) {
     if(tetrisBoard.currentTetrisObject != null && tetrisBoard.eventLoopIdentifier != null) {

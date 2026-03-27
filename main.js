@@ -27,6 +27,9 @@ const server = http.createServer((req, res) => {
                         case '.png':
                             contentType = 'image/png';
                             break;
+                        case '.svg':
+                            contentType = 'image/svg+xml';
+                            break;
                         default:
                             contentType = 'text/plain';
                             break;
