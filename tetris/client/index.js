@@ -6,6 +6,9 @@ const levelEle = document.querySelector('.figures-level-num');
 const scoreEle = document.querySelector('.figures-score-num');
 const linesEle = document.querySelector('.figures-lines-num');
 
+const pauseIcon = document.querySelector('.options-btn-pau');
+const playIcon = document.querySelector('.options-btn-ply');
+
 
 let tetrisBoard = null;
 let renderRulesData = null;
@@ -18,7 +21,8 @@ class tetrisGame {
         this.currentTetrisObject = null;
         this.eventLoopIdentifier = null;
         this.boardColor = 'white';
-        this.updateSpeed = 800;
+        this.updateTime = 800;
+        this.paused = false;
         this.currentBlock = null;
         this.nextBlock = null;
 
@@ -28,7 +32,7 @@ class tetrisGame {
             lineClearScore: {
                 1: 100, 2: 300, 3: 500, 4: 800 // { Lines Cleared: Score Multiplier }
             },
-            speedInterval: 50,
+            updateTimeInterval: 50,
             comboMultiplier: 50
         } 
         this.level = 1;
@@ -76,6 +80,14 @@ class tetrisBlock {
             let yPrint = this.position[1] + this.renderRules[i][1];
             
             tetrisBoard.gameBoard[xPrint][yPrint].ref.style.backgroundColor = filledCellColor;
+        }
+    }
+    unrender(emptyCellColor) {
+        for(let i = 0; i < this.renderRules.length; i++) {
+            let xPrint = this.position[0] + this.renderRules[i][0];
+            let yPrint = this.position[1] + this.renderRules[i][1];
+            
+            tetrisBoard.gameBoard[xPrint][yPrint].ref.style.backgroundColor = emptyCellColor;
         }
     }
     translate(translationVector) {
@@ -159,6 +171,10 @@ class tetrisBlock {
 
 
 
+document.querySelector('.options-pause').addEventListener('click', (e) => {
+    playPause(2);
+});
+
 document.addEventListener('keydown', (e1) => {
     keyDownEvent(e1);
 });
@@ -189,9 +205,9 @@ function keyDownEvent(e1) {
                     tetrisBoard.score++;
                     scoreEle.innerText = tetrisBoard.score.toString();
 
-                    startStopEventLoop(0);
+                    startStopEventLoop(false);
                     tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
-                    startStopEventLoop(1);
+                    startStopEventLoop(true);
                 }
                 break;
             case (' ' === key):
@@ -209,10 +225,10 @@ function keyDownEvent(e1) {
                 tetrisBoard.score += 2 + dropAttempts;
                 scoreEle.innerText = tetrisBoard.score.toString();
 
-                startStopEventLoop(0);
+                startStopEventLoop(false);
                 processPieceSubmission();
                 setTimeout(() => {
-                    startStopEventLoop(1);
+                    startStopEventLoop(true);
                     eventLoop();
                 }, 200);
         }
@@ -244,12 +260,12 @@ async function initializeBoard() {
         try {
             renderRulesData = await fetch('/game/renderRules.json').then((res) => { return res.json(); });
 
-            startStopEventLoop(1);
+            startStopEventLoop(true);
         } catch (err) {
             console.error(`Failed initialization: ${err}`);
         }
     } else {
-        startStopEventLoop(1);
+        startStopEventLoop(true);
     }
 }
 
@@ -275,7 +291,7 @@ function eventLoop() {
         tetrisBoard.currentTetrisObject = new tetrisBlock(renderRulesData[tetrisBoard.currentBlock], [4, 1]);
 
         if (!tetrisBoard.currentTetrisObject.occupationSuccess) {
-            startStopEventLoop(0);
+            startStopEventLoop(false);
             if (confirm('Game Over! Would you like to restart?')) {
                 resetGame();
                 return;
@@ -290,9 +306,9 @@ function eventLoop() {
         if (tetrisBoard.currentTetrisObject.translate([0, 1])) {
             tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
         } else {
-            startStopEventLoop(0);
+            startStopEventLoop(false);
             processPieceSubmission();
-            startStopEventLoop(1);
+            startStopEventLoop(true);
             eventLoop();
         }
     }
@@ -385,7 +401,7 @@ function processPieceSubmission() {
             tetrisBoard.level = trueLevel;
             levelEle.innerText = (tetrisBoard.level).toString();
             if (trueLevel <= 15) {
-                tetrisBoard.updateSpeed -= tetrisBoard.multipliers.speedInterval;
+                tetrisBoard.updateTime -= tetrisBoard.multipliers.updateTimeInterval;
             }
         }
         // Leveling Up!
@@ -415,17 +431,43 @@ function processPieceSubmission() {
     }
 }
 
+function playPause(operation) {
+    if (operation === 0 && tetrisBoard.eventLoopIdentifier !== null) {
+        startStopEventLoop(false);
+        tetrisBoard.paused = true;
+
+        pauseIcon.style.display = "none";
+        playIcon.style.display = "inline";
+        tetrisBoard.currentTetrisObject.unrender(tetrisBoard.boardColor);
+        ctx.reset();
+    } else if (operation === 1 && tetrisBoard.eventLoopIdentifier === null) {
+        startStopEventLoop(true);
+        tetrisBoard.paused = false;
+
+        pauseIcon.style.display = "inline";
+        playIcon.style.display = "none";
+        tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
+        drawNextPieceFrame();
+    } else if (operation === 2) {
+        if (tetrisBoard.paused) {
+            playPause(1);
+        } else {
+            playPause(0);
+        }
+    }
+}
+
 function startStopEventLoop(operation) {
-    if(operation === 1 && tetrisBoard.eventLoopIdentifier == null) {
-        return tetrisBoard.eventLoopIdentifier = setInterval(eventLoop, tetrisBoard.updateSpeed);
-    } else if (operation === 0 && tetrisBoard.eventLoopIdentifier != null) {
+    if(operation && tetrisBoard.eventLoopIdentifier === null) {
+        return tetrisBoard.eventLoopIdentifier = setInterval(eventLoop, tetrisBoard.updateTime);
+    } else if (!operation && tetrisBoard.eventLoopIdentifier !== null) {
         clearInterval(tetrisBoard.eventLoopIdentifier);
         tetrisBoard.eventLoopIdentifier = null;
     }
 }
 
 function resetGame() {
-    startStopEventLoop(0);
+    startStopEventLoop(false);
 
     ctx.reset();
     document.querySelector('.board').innerHTML = '';
@@ -433,6 +475,9 @@ function resetGame() {
     levelEle.innerText = '1';
     scoreEle.innerText = '0';
     linesEle.innerText = '0';
+
+    pauseIcon.style.display = "inline";
+    playIcon.style.display = "none";
 
     initializeBoard();
 }

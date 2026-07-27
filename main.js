@@ -108,4 +108,6 @@ const server = http.createServer((req, res) => {
     }
 });
 
-server.listen(port);
+server.listen(port, () => {
+    console.log(`\x1b[0mResponding to requests at port \x1b[31m${port}\x1b[0m.`);
+});
