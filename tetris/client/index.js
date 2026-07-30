@@ -23,6 +23,7 @@ class tetrisGame {
         this.boardColor = 'white';
         this.updateTime = 800;
         this.paused = false;
+        this.pauseBoardData = [];
         this.currentBlock = null;
         this.nextBlock = null;
 
@@ -80,14 +81,6 @@ class tetrisBlock {
             let yPrint = this.position[1] + this.renderRules[i][1];
             
             tetrisBoard.gameBoard[xPrint][yPrint].ref.style.backgroundColor = filledCellColor;
-        }
-    }
-    unrender(emptyCellColor) {
-        for(let i = 0; i < this.renderRules.length; i++) {
-            let xPrint = this.position[0] + this.renderRules[i][0];
-            let yPrint = this.position[1] + this.renderRules[i][1];
-            
-            tetrisBoard.gameBoard[xPrint][yPrint].ref.style.backgroundColor = emptyCellColor;
         }
     }
     translate(translationVector) {
@@ -436,17 +429,30 @@ function playPause(operation) {
         startStopEventLoop(false);
         tetrisBoard.paused = true;
 
+        tetrisBoard.pauseBoardData = [];
+        for(let x = 0; x < tetrisBoard.dimentions.columns; x++) {
+            tetrisBoard.pauseBoardData.push([]);
+            for(let y = 0; y < tetrisBoard.dimentions.rows; y++) {
+                tetrisBoard.pauseBoardData[x].push(tetrisBoard.gameBoard[x][y].ref.style.backgroundColor);
+                tetrisBoard.gameBoard[x][y].ref.style.backgroundColor = tetrisBoard.boardColor;
+            }
+        }
+
         pauseIcon.style.display = "none";
         playIcon.style.display = "inline";
-        tetrisBoard.currentTetrisObject.unrender(tetrisBoard.boardColor);
         ctx.reset();
     } else if (operation === 1 && tetrisBoard.eventLoopIdentifier === null) {
         startStopEventLoop(true);
         tetrisBoard.paused = false;
 
+        for(let x = 0; x < tetrisBoard.dimentions.columns; x++) {
+            for(let y = 0; y < tetrisBoard.dimentions.rows; y++) {
+                tetrisBoard.gameBoard[x][y].ref.style.backgroundColor = tetrisBoard.pauseBoardData[x][y];
+            }
+        }
+
         pauseIcon.style.display = "inline";
         playIcon.style.display = "none";
-        tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
         drawNextPieceFrame();
     } else if (operation === 2) {
         if (tetrisBoard.paused) {
