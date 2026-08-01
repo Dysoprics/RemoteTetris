@@ -71,3 +71,67 @@
 .options-btn-ply {
     display: none;
 }
+
+.popup {
+    background-color: rgba(0, 0, 0, 0.500);
+    position: absolute;
+    display: none;
+
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.popup-box {
+    background-color: rgb(209, 209, 209);
+    border: 2px solid rgb(63, 63, 63);
+    position: absolute;
+    font-family: Arial;
+
+    top: 33%;
+    left: 33%;
+    bottom: 33%;
+    right: 33%;
+}
+
+.popup-box-head {
+    background-color: white;
+    border-bottom: 2px solid rgb(63, 63, 63);
+
+    padding: 4px;
+}
+
+.popup-box-body {
+    text-align: center;
+
+    margin: 5px;
+}
+
+.popup-box-foot {
+    background-color: white;
+    border-top: 2px solid rgb(63, 63, 63);
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+
+    top: calc(100% - 30px);
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.popup-box-foot-btn {
+    border: 2px solid black;
+    color: white;
+    margin-right: 5px;
+}
+
+.foot-btn-1 {
+    background-color: rgb(58, 124, 255);
+}
+
+.foot-btn-2 {
+    background-color: rgb(43, 95, 198);
+}

@@ -228,6 +228,47 @@ function keyDownEvent(e1) {
     }
 }
 
+function issuePopup(headerText, bodyText, btnTwoExists, btnOneText, btnTwoText, btnOneFunc, btnTwoFunc) {
+    const popup = document.querySelector('.popup');
+    const header = document.querySelector('.popup-box-head');
+    const body = document.querySelector('.popup-box-body');
+    const btnOne = document.querySelector('.foot-btn-1');
+    const btnTwo = document.querySelector('.foot-btn-2');
+
+    popup.style.display = 'block';
+    header.innerText = headerText;
+    body.innerText = bodyText;
+    btnOne.innerText = btnOneText;
+    btnTwo.innerText = btnTwoText;
+
+    if (btnTwoExists) {
+        btnTwo.style.display = 'inline-block';
+    } else {
+        btnTwo.style.display = 'none';
+    }
+
+    const closeFunction = () => {
+        popup.style.display = 'none';
+    }
+    const nothingFunction = () => {}
+
+    if (btnOneFunc === 'close') {
+        btnOneFunc = closeFunction;
+    } else if (btnOneFunc === 'nothing') {
+        btnOneFunc = nothingFunction;
+    }
+    if (btnTwoFunc === 'close') {
+        btnTwoFunc = closeFunction;
+    } else if (btnTwoFunc === 'nothing') {
+        btnTwoFunc = nothingFunction;
+    }
+
+    console.log(btnOneFunc);
+
+    btnOne.addEventListener('click', btnOneFunc);
+    btnTwo.addEventListener('click', btnTwoFunc);
+}
+
 async function initializeBoard() {
     tetrisBoard = new tetrisGame();
 
