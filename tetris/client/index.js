@@ -164,13 +164,19 @@ class tetrisBlock {
 
 
 
-document.querySelector('.options-pause').addEventListener('click', (e) => {
-    playPause(2);
-});
 
 document.addEventListener('keydown', (e1) => {
     keyDownEvent(e1);
 });
+
+document.querySelector('.options-pause').addEventListener('click', () => {
+    playPause(2);
+});
+
+document.querySelector('.options-reset').addEventListener('click', () => {
+    playPause(0);
+    issuePopup("Are you sure?", "Are you sure you want to reset? All your progress for this game will be lost. Remember, the next game will not start in the paused state.", true, "Nevermind", "Restart", closePopup, () => { resetGame(); closePopup(); });
+})
 
 
 
@@ -224,6 +230,8 @@ function keyDownEvent(e1) {
                     startStopEventLoop(true);
                     eventLoop();
                 }, 200);
+            case ('escape' === key): 
+                playPause(2);
         }
     }
 }
@@ -247,26 +255,17 @@ function issuePopup(headerText, bodyText, btnTwoExists, btnOneText, btnTwoText, 
         btnTwo.style.display = 'none';
     }
 
-    const closeFunction = () => {
-        popup.style.display = 'none';
-    }
-    const nothingFunction = () => {}
+    const newBtnOne = btnOne.cloneNode(true);
+    const newBtnTwo = btnTwo.cloneNode(true);
+    btnOne.parentNode.replaceChild(newBtnOne, btnOne);
+    btnTwo.parentNode.replaceChild(newBtnTwo, btnTwo);
 
-    if (btnOneFunc === 'close') {
-        btnOneFunc = closeFunction;
-    } else if (btnOneFunc === 'nothing') {
-        btnOneFunc = nothingFunction;
-    }
-    if (btnTwoFunc === 'close') {
-        btnTwoFunc = closeFunction;
-    } else if (btnTwoFunc === 'nothing') {
-        btnTwoFunc = nothingFunction;
-    }
+    newBtnOne.addEventListener('click', btnOneFunc);
+    newBtnTwo.addEventListener('click', btnTwoFunc);
+}
 
-    console.log(btnOneFunc);
-
-    btnOne.addEventListener('click', btnOneFunc);
-    btnTwo.addEventListener('click', btnTwoFunc);
+function closePopup() {
+    document.querySelector('.popup').style.display = 'none';
 }
 
 async function initializeBoard() {
@@ -292,11 +291,21 @@ async function initializeBoard() {
 
     if (renderRulesData === null) {
         try {
-            renderRulesData = await fetch('/game/renderRules.json').then((res) => { return res.json(); });
+            let status = null;
+
+            renderRulesData = await fetch('/game/renderRules.json').then((res) => { 
+                status = res.status; 
+                return res.json(); 
+            });
+
+            if (status !== 200) {
+                throw new Error(`The file could not be fetched through the server. Server returned code ${status}.`);
+            }
 
             startStopEventLoop(true);
         } catch (err) {
-            console.error(`Failed initialization: ${err}`);
+            console.error(`Initialization routine failed to fetch external render rules JSON. See thrown error here: [${err}]`);
+            issuePopup("An Error Occured", "An error occured while initializing your game. The program could not access resources through the server. [See console for additional details.]", true, "Reload Page", "OK", () => { window.location.reload(); }, closePopup);
         }
     } else {
         startStopEventLoop(true);
@@ -326,12 +335,8 @@ function eventLoop() {
 
         if (!tetrisBoard.currentTetrisObject.occupationSuccess) {
             startStopEventLoop(false);
-            if (confirm('Game Over! Would you like to restart?')) {
-                resetGame();
-                return;
-            } else {
-                return;
-            }
+            issuePopup("Game Over", "Game over! Would you like to try again? Pressing OK will not restart the game until you press the restart button.", true, "Try Again", "OK", () => { resetGame(); closePopup(); }, closePopup);
+            return;
         }
         tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color); 
 
@@ -481,7 +486,13 @@ function playPause(operation) {
 
         pauseIcon.style.display = "none";
         playIcon.style.display = "inline";
+
         ctx.reset();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.font = "25px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("PAUSED", 0, 0);
     } else if (operation === 1 && tetrisBoard.eventLoopIdentifier === null) {
         startStopEventLoop(true);
         tetrisBoard.paused = false;
@@ -494,7 +505,11 @@ function playPause(operation) {
 
         pauseIcon.style.display = "inline";
         playIcon.style.display = "none";
-        drawNextPieceFrame();
+
+        ctx.reset();
+        if (tetrisBoard.nextBlock !== null) {
+            drawNextPieceFrame();
+        }
     } else if (operation === 2) {
         if (tetrisBoard.paused) {
             playPause(1);
