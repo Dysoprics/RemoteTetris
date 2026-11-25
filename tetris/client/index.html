@@ -34,6 +34,201 @@
             </div>
         </div>
     </div>
+    <div class="settings">
+        <div class="settings-box">
+            <div class="settings-box-head">
+                <p class="settings-box-head-name">Settings</p>
+                <button class="settings-box-head-close">X</button>
+            </div>
+            <div class="settings-box-body">
+
+                <p class="tooltip">Tip: Click the <img class="tooltip-infoicon" src="assets/info.svg" alt="info" onclick="alert('Yea exactly like that. The information will appear like this.')"> icon to learn more about a setting.</p>
+
+                <div class="section">
+                    <p class="section-header">Image and Visuals</p>
+
+                    <div class="section-setting">
+                        <p class="section-setting-title">Dark Mode</p>
+                        <div class="section-setting-changers">
+                            <button class="section-setting-changers-switchbtn">Off</button>
+                        </div>
+                    </div>
+
+                    <div class="section-setting">
+                        <p class="section-setting-title">Next Piece Preview Window</p>
+                        <img class="section-setting-subindicator" src="/assets/dnArrow.svg">
+                    </div>
+                    <div class="section-setting subsetting">
+                        <p class="section-setting-title">Show Next Tetromino</p>
+                        <div class="section-setting-changers">
+                            <button class="section-setting-changers-switchbtn switchbtn-on">On</button>
+                        </div>
+                    </div>
+                    <div class="section-setting subsetting-bottom">
+                        <p class="section-setting-title">Show Pause Dialog</p>
+                        <div class="section-setting-changers">
+                            <button class="section-setting-changers-switchbtn switchbtn-on">On</button>
+                        </div>
+                    </div>
+
+                    <div class="section-setting subsetting-terminator">
+                        <p class="section-setting-title">Hide Tetris Board Grid</p>
+                        <div class="section-setting-changers">
+                            <button class="section-setting-changers-switchbtn">Off</button>
+                        </div>
+                    </div>
+
+                    <div class="section-setting">
+                        <p class="section-setting-title">Set Tetromino Colors</p>
+                        <img class="section-setting-subindicator" src="/assets/dnArrow.svg">
+                    </div>
+                    <div class="section-setting subsetting">
+                        <p class="section-setting-title">Tetromino O</p>
+                        <div class="section-setting-changers">
+                            <input type="color" class="section-setting-changers-swatch">
+                        </div>
+                    </div>
+                    <div class="section-setting subsetting">
+                        <p class="section-setting-title">Tetromino I</p>
+                        <div class="section-setting-changers">
+                            <input type="color" class="section-setting-changers-swatch">
+                        </div>
+                    </div>
+                    <div class="section-setting subsetting">
+                        <p class="section-setting-title">Tetromino S</p>
+                        <div class="section-setting-changers">
+                            <input type="color" class="section-setting-changers-swatch">
+                        </div>
+                    </div>
+                    <div class="section-setting subsetting">
+                        <p class="section-setting-title">Tetromino Z</p>
+                        <div class="section-setting-changers">
+                            <input type="color" class="section-setting-changers-swatch">
+                        </div>
+                    </div>
+                    <div class="section-setting subsetting">
+                        <p class="section-setting-title">Tetromino L</p>
+                        <div class="section-setting-changers">
+                            <input type="color" class="section-setting-changers-swatch">
+                        </div>
+                    </div>
+                    <div class="section-setting subsetting">
+                        <p class="section-setting-title">Tetromino J</p>
+                        <div class="section-setting-changers">
+                            <input type="color" class="section-setting-changers-swatch">
+                        </div>
+                    </div>
+                    <div class="section-setting subsetting">
+                        <p class="section-setting-title">Tetromino T</p>
+                        <div class="section-setting-changers">
+                            <input type="color" class="section-setting-changers-swatch">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <p class="section-header">Popup Behavior</p>
+
+                    <div class="section-setting">
+                        <div>
+                            <img class="infoicon" src="assets/info.svg" alt="-Click for Info-" onclick="alert('When enabled, pressing the game restart button on the player control panel will ask if you are sure before committing to the restart.')">
+                            <p class="section-setting-title">Ask Before Manual Reset</p>
+                        </div>
+                        <div class="section-setting-changers">
+                            <button class="section-setting-changers-switchbtn switchbtn-on">On</button>
+                        </div>
+                    </div>
+
+                    <div class="section-setting">
+                        <div>
+                            <img class="infoicon" src="assets/info.svg" alt="-Click for Info-" onclick="alert('When you get a game over, different actions will automatically happen depending on the state of this setting. \n\n[ Restart: On game over, a new game will immediately start. \n[ Do Nothing: Nothing will happen when the game ends, so the player must manually restart the game when ready. \n[ Ask: On game over, a prompt will pop up asking if the player would like to restart or do nothing.')">
+                            <p class="section-setting-title">Game Over Behavior</p>
+                        </div>
+                        <div class="section-setting-changers">
+                            <button class="section-setting-changers-optionbtn">Restart</button>
+                            <button class="section-setting-changers-optionbtn">Do Nothing</button>
+                            <button class="section-setting-changers-optionbtn optionbtn-on">Ask</button>
+                        </div>
+                    </div>
+
+                    <div class="section-setting">
+                        <div>
+                            <img class="infoicon" src="assets/info.svg" alt="-Click for Info-" onclick="alert('When enabled, the site will revert to using the default alert() popups rather than the game\'s custom popups. (The popup that contains this message is a legacy popup.)')">
+                            <p class="section-setting-title">Legacy Popups</p>
+                        </div>
+                        <div class="section-setting-changers">
+                            <button class="section-setting-changers-switchbtn">Off</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <p class="section-header">Gameplay</p>
+
+                    <div class="section-setting">
+                        <div>
+                            <img class="infoicon" src="assets/info.svg" alt="-Click for Info-" onclick="alert('Freeplay is a gamemode that disables the progressive speed increase. \n\nWARNING: Enabling/Disabling this will IMMEDIATELY restart the game to allow the new gamemode to take effect.')">
+                            <p class="section-setting-title">Freeplay <span style="color: red;">(Game Will Immediately Restart)</span></p>
+                        </div>
+                        <div class="section-setting-changers">
+                            <button class="section-setting-changers-switchbtn">Off</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <p class="section-header">Bindings</p>
+
+                    <div class="section-setting">
+                        <p class="section-setting-title">Keybinds</p>
+                        <img class="section-setting-subindicator" src="/assets/dnArrow.svg">
+                    </div>
+                    <div class="section-setting subsetting">
+                        <p class="section-setting-title">Rotate Piece</p>
+                        <div class="section-setting-changers">
+                            <button class="section-setting-changers-keybindRec">Key: -</button>
+                            <button class="section-setting-changers-keybindClear">Clear Binding</button>
+                        </div>
+                    </div>
+                    <div class="section-setting subsetting">
+                        <p class="section-setting-title">Move Piece Left</p>
+                        <div class="section-setting-changers">
+                            <button class="section-setting-changers-keybindRec">Key: -</button>
+                            <button class="section-setting-changers-keybindClear">Clear Binding</button>
+                        </div>
+                    </div>
+                    <div class="section-setting subsetting">
+                        <p class="section-setting-title">Move Piece Right</p>
+                        <div class="section-setting-changers">
+                            <button class="section-setting-changers-keybindRec">Key: -</button>
+                            <button class="section-setting-changers-keybindClear">Clear Binding</button>
+                        </div>
+                    </div>
+                    <div class="section-setting subsetting">
+                        <p class="section-setting-title">Soft Drop Piece</p>
+                        <div class="section-setting-changers">
+                            <button class="section-setting-changers-keybindRec">Key: -</button>
+                            <button class="section-setting-changers-keybindClear">Clear Binding</button>
+                        </div>
+                    </div>
+                    <div class="section-setting subsetting">
+                        <p class="section-setting-title">Hard Drop Piece</p>
+                        <div class="section-setting-changers">
+                            <button class="section-setting-changers-keybindRec">Key: -</button>
+                            <button class="section-setting-changers-keybindClear">Clear Binding</button>
+                        </div>
+                    </div>
+                    <div class="section-setting subsetting">
+                        <p class="section-setting-title">Pause Game</p>
+                        <div class="section-setting-changers">
+                            <button class="section-setting-changers-keybindRec">Key: -</button>
+                            <button class="section-setting-changers-keybindClear">Clear Binding</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <script src="/game/index.js"></script>
 </body>

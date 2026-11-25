@@ -102,7 +102,7 @@ const server = http.createServer((req, res) => {
         
         else {
             res.writeHead(404, {'Content-Type': 'application/json'});
-            res.write('{"status": 404}');
+            res.write('<h1 style="text-align: center;">404 Not Found</h1>');
             res.end();
         }
     }

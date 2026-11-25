@@ -39,7 +39,7 @@
         "renderRules": [[-1, 0], [0, -1], [0, 0], [1, 0]],
         "rotationRules": 0,
         "spawnRules": 0,
-        "color": "purple"
+        "color": "rebeccapurple"
     },
     {
         "characterRep": "⠞",

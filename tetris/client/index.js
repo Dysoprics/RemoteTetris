@@ -12,6 +12,7 @@ const playIcon = document.querySelector('.options-btn-ply');
 
 let tetrisBoard = null;
 let renderRulesData = null;
+let overlayOpen = false;
 
 class tetrisGame {
     constructor() {
@@ -181,58 +182,57 @@ document.querySelector('.options-reset').addEventListener('click', () => {
 
 
 function keyDownEvent(e1) {
-    if(tetrisBoard.currentTetrisObject != null && tetrisBoard.eventLoopIdentifier != null) {
-        let key = e1.key.toLowerCase();
-        switch(true) {
-            case ('arrowleft' === key || 'a' === key):
-                if(tetrisBoard.currentTetrisObject.translate([-1, 0])) {
-                    tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
-                }
-                break;
-            case ('arrowright' === key || 'd' === key):
-                if(tetrisBoard.currentTetrisObject.translate([1, 0])) {
-                    tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
-                }
-                break;
-            case ('arrowup' === key || 'w' === key):
-                if(tetrisBoard.currentTetrisObject.rotate(true)) {
-                    tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
-                }
-                break;
-            case ('arrowdown' === key || 's' === key):
-                if(tetrisBoard.currentTetrisObject.translate([0, 1])) {
-                    tetrisBoard.score++;
-                    scoreEle.innerText = tetrisBoard.score.toString();
-
-                    startStopEventLoop(false);
-                    tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
-                    startStopEventLoop(true);
-                }
-                break;
-            case (' ' === key):
-                let attemptDropAgain = true;
-                let dropAttempts = 0;
-                while (attemptDropAgain) {
-                    if (tetrisBoard.currentTetrisObject.translate([0, 1])) {
-                        dropAttempts++;
-                    } else {
-                        attemptDropAgain = false;
-                    }
-                }
+    let key = e1.key.toLowerCase();
+    const running = tetrisBoard.currentTetrisObject != null && tetrisBoard.eventLoopIdentifier != null;
+    switch(true) {
+        case ('arrowleft' === key || 'a' === key) && running:
+            if(tetrisBoard.currentTetrisObject.translate([-1, 0])) {
                 tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
-
-                tetrisBoard.score += 2 + dropAttempts;
+            }
+            break;
+        case ('arrowright' === key || 'd' === key) && running:
+            if(tetrisBoard.currentTetrisObject.translate([1, 0])) {
+                tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
+            }
+            break;
+        case ('arrowup' === key || 'w' === key) && running:
+            if(tetrisBoard.currentTetrisObject.rotate(true)) {
+                tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
+            }
+            break;
+        case ('arrowdown' === key || 's' === key) && running:
+            if(tetrisBoard.currentTetrisObject.translate([0, 1])) {
+                tetrisBoard.score++;
                 scoreEle.innerText = tetrisBoard.score.toString();
 
                 startStopEventLoop(false);
-                processPieceSubmission();
-                setTimeout(() => {
-                    startStopEventLoop(true);
-                    eventLoop();
-                }, 200);
-            case ('escape' === key): 
-                playPause(2);
-        }
+                tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
+                startStopEventLoop(true);
+            }
+            break;
+        case (' ' === key) && running:
+            let attemptDropAgain = true;
+            let dropAttempts = 0;
+            while (attemptDropAgain) {
+                if (tetrisBoard.currentTetrisObject.translate([0, 1])) {
+                    dropAttempts++;
+                } else {
+                    attemptDropAgain = false;
+                }
+            }
+            tetrisBoard.currentTetrisObject.render(tetrisBoard.boardColor, tetrisBoard.currentTetrisObject.color);
+
+            tetrisBoard.score += 2 + dropAttempts;
+            scoreEle.innerText = tetrisBoard.score.toString();
+
+            startStopEventLoop(false);
+            processPieceSubmission();
+            setTimeout(() => {
+                startStopEventLoop(true);
+                eventLoop();
+            }, 200);
+        case ('escape' === key):
+            playPause(2);
     }
 }
 
@@ -262,10 +262,13 @@ function issuePopup(headerText, bodyText, btnTwoExists, btnOneText, btnTwoText, 
 
     newBtnOne.addEventListener('click', btnOneFunc);
     newBtnTwo.addEventListener('click', btnTwoFunc);
+
+    overlayOpen = true;
 }
 
 function closePopup() {
     document.querySelector('.popup').style.display = 'none';
+    overlayOpen = false;
 }
 
 async function initializeBoard() {
@@ -296,7 +299,7 @@ async function initializeBoard() {
             renderRulesData = await fetch('/game/renderRules.json').then((res) => { 
                 status = res.status; 
                 return res.json(); 
-            });
+            }); 
 
             if (status !== 200) {
                 throw new Error(`The file could not be fetched through the server. Server returned code ${status}.`);
@@ -305,7 +308,7 @@ async function initializeBoard() {
             startStopEventLoop(true);
         } catch (err) {
             console.error(`Initialization routine failed to fetch external render rules JSON. See thrown error here: [${err}]`);
-            issuePopup("An Error Occured", "An error occured while initializing your game. The program could not access resources through the server. [See console for additional details.]", true, "Reload Page", "OK", () => { window.location.reload(); }, closePopup);
+            issuePopup("An Error Occured", "An error occured while initializing your game. The program could not access resources through the server. The game cannot functionally operate without these resources. [See console for additional details.]", false, "Reload Page", "OK", () => { window.location.reload(); }, closePopup);
         }
     } else {
         startStopEventLoop(true);
@@ -493,7 +496,7 @@ function playPause(operation) {
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText("PAUSED", 0, 0);
-    } else if (operation === 1 && tetrisBoard.eventLoopIdentifier === null) {
+    } else if (operation === 1 && tetrisBoard.eventLoopIdentifier === null && !overlayOpen) {
         startStopEventLoop(true);
         tetrisBoard.paused = false;
 
@@ -540,6 +543,8 @@ function resetGame() {
 
     pauseIcon.style.display = "inline";
     playIcon.style.display = "none";
+
+    overlayOpen = false;
 
     initializeBoard();
 }
